@@ -20,3 +20,11 @@ relabeled = sitk.RelabelComponent(cc, sortByObjectSize=True)
 two_largest = sitk.BinaryThreshold(relabeled, lowerThreshold=1, upperThreshold=2, insideValue=1, outsideValue=0)
 n_after_cc = int(sitk.GetArrayViewFromImage(two_largest).sum())
 print(f"After keeping 2 largest components: {n_after_cc:,} voxels")
+#Closing
+radius_vec = (closing_radius, closing_radius, closing_radius)
+closed = sitk.BinaryMorphologicalClosing(two_largest, radius_vec)
+
+#Hole-filling
+filled = sitk.BinaryFillhole(closed, fullyConnected=True)
+n_final = int(sitk.GetArrayViewFromImage(filled).sum())
+print(f"After closing + hole-fill: {n_final:,} voxels")
